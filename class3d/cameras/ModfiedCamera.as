@@ -1,5 +1,5 @@
 ﻿package sav.class3d.cameras
-{
+{ 
 	import flash.display.Sprite;
 	
 	import sandy.core.scenegraph.Camera3D;

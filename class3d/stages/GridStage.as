@@ -1,5 +1,5 @@
 ﻿package sav.class3d.stages
-{
+{  
 	import flash.display.LoaderInfo;
 	import flash.display.Sprite;
 	import flash.filters.GlowFilter;

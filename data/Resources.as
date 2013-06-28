@@ -1,5 +1,5 @@
 ﻿package sav.data
-{
+{  
 	import flash.display.Loader;
 	import flash.display.Bitmap;
 	import flash.events.EventDispatcher;	
