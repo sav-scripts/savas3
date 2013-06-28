@@ -1,5 +1,6 @@
 package sav.game.map.grid_layer 
 {
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
 	import flash.display.Shape;
@@ -16,6 +17,19 @@ package sav.game.map.grid_layer
 	 */
 	public class GridLayer extends MovieClip
 	{		
+		public static function quickBuildAt(container:DisplayObjectContainer):GridLayer
+		{
+			var gridLayer:GridLayer = new GridLayer(true);
+			
+			gridLayer.setStyle(0x999999, 1, .15, true, 5, 5, 0x555555, 2, .3);
+			gridLayer.resize(container.stage.stageWidth, container.stage.stageHeight, 20, 20);
+			gridLayer.update();
+			
+			container.addChild(gridLayer);
+			
+			return gridLayer;
+		}
+		
 		public function GridLayer(withRuler:Boolean = true):void
 		{
 			mouseChildren = mouseEnabled = false;
@@ -41,7 +55,9 @@ package sav.game.map.grid_layer
 			{
 				var g:Graphics = _ruler.graphics;
 				g.clear();		
-				GraphicDrawer.drawBorder(g, new Rectangle(0, 0, _viewWidth, _viewHeight), _rulerBaseColor, 1, 0, _rulerSize );		
+				//GraphicDrawer.drawBorder(g, new Rectangle(0, 0, _viewWidth, _viewHeight), _rulerBaseColor, 1, 0, _rulerSize );	
+				g.beginFill(_rulerBaseColor, 1);
+				GraphicDrawer.drawBorder(g, new Rectangle(0, 0, _viewWidth, _viewHeight), 0, 1, 0);
 			}
 		}
 		
@@ -235,7 +251,8 @@ package sav.game.map.grid_layer
 			var g:Graphics = _ruler.graphics;
 			g.beginFill(0x333333);
 			
-			GraphicDrawer.drawBorder(g, new Rectangle(0, 0, _viewWidth, _viewHeight), 0x333333, 1, 0, _rulerSize );
+			//GraphicDrawer.drawBorder(g, new Rectangle(0, 0, _viewWidth, _viewHeight), 0x333333, 1, 0, _rulerSize );
+			GraphicDrawer.drawBorder(g, new Rectangle(0, 0, _viewWidth, _viewHeight), 0, 1, 0 );
 			/*
 			g.moveTo(0, 0);
 			g.lineTo(_viewWidth, 0);

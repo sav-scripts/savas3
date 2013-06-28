@@ -1,16 +1,69 @@
 ﻿package sav.gp
 {
 	import flash.display.BitmapData;
+	import flash.display.BitmapDataChannel;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Graphics;
 	import flash.display.Shape;
 	import flash.display.Sprite;
+	import flash.filters.ColorMatrixFilter;
 	import flash.geom.Rectangle;
 	import flash.geom.Point;
 	import flash.geom.Matrix;
 	
 	public class BitmapUtils
 	{
+		/**
+		 * draw a bitmapData(fill with baseColor)'s alpha channel, base on sourceBitmapData's gray scale
+		 * 
+		 * @param	sourceBitmapData
+		 * @param	color
+		 * @return
+		 */
+		public static function getColorChannel(sourceBitmapData:BitmapData, baseColor:uint = 0xffffffff, targetChannel:uint = BitmapDataChannel.ALPHA):BitmapData
+		{
+			sourceBitmapData = sourceBitmapData.clone();
+			sourceBitmapData = getGrayScale(sourceBitmapData);
+			
+			var bitmapData:BitmapData = new BitmapData(sourceBitmapData.width, sourceBitmapData.height, true, baseColor);
+			bitmapData.copyChannel(sourceBitmapData, bitmapData.rect, new Point(), BitmapDataChannel.RED, targetChannel);
+			
+			return bitmapData;
+		}
+		
+		/**
+		 * get sourceBtmapData's gray scale bitmapData
+		 * 
+		 * @param	sourceBitmapData
+		 * @return
+		 */
+		public static function getGrayScale(sourceBitmapData:BitmapData, applyOnSource:Boolean = false, grayRate:Number = (1/3)):BitmapData
+		{
+			var t:Number = grayRate;
+			var filter:ColorMatrixFilter = new ColorMatrixFilter([
+				t, t, t, 0, 0,
+				t, t, t, 0, 0,
+				t, t, t, 0, 0,
+				0, 0, 0, 1, 0]);
+			
+			var bitmapData:BitmapData = (applyOnSource == true) ? sourceBitmapData : new BitmapData(sourceBitmapData.width, sourceBitmapData.height, true, 0xffffffff);
+			bitmapData.applyFilter(sourceBitmapData, bitmapData.rect, new Point(), filter);
+			
+			return bitmapData;
+		}
+		
+		public static function adjustGamma(sourceBitmapData:BitmapData, c:uint = 128, cMin:uint = 0, cMax:int = 255):void
+		{
+			var gamma:Number = Math.log((c - cMin) / (cMax - cMin)) / Math.log(0.5);
+			var mapR:Array = [], mapG:Array = [], mapB:Array = [];
+			for(var i:int = 0; i < 256; i++) {
+			 mapB[i] = i < cMin ? 0 : i > cMax ? 0xff : 255 * Math.pow((i - cMin) / (cMax - cMin), 1 / gamma);
+			 mapG[i] = mapB[i] << 8;
+			 mapR[i] = mapB[i] << 16;
+			}
+			sourceBitmapData.paletteMap(sourceBitmapData, sourceBitmapData.rect, new Point(), mapR, mapG, mapB);
+		}
+		
 		public static function resize(oldBitmapData:BitmapData , newWidth:uint , newHeight:uint , smooth:Boolean = true):BitmapData
 		{
 			var newBitmapData:BitmapData		= new BitmapData(newWidth , newHeight , true , 0xffffffff);
@@ -256,7 +309,6 @@
 			indices.push(si+0, si+1, si+2);
 			uvData.push(u0, v0, u1, v0, u1, v1);
 			si += 3;
-			
 			
 			g.beginBitmapFill(bmd);
 			g.drawTriangles(vertices, indices, uvData);
