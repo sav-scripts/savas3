@@ -4,6 +4,7 @@ package sav.utils
 	 * ...
 	 * @author sav
 	 */
+	//
 	public class MathUtils 
 	{
 		///取得隨機正負值
